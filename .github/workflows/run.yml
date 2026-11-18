@@ -1,0 +1,29 @@
+name: BTC signal bot
+
+on:
+  schedule:
+    - cron: '7 */3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: btc-signal-bot
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    env:
+      SIGNAL_MINUTE: '2'
+      MIN_EDGE: '0.02'
+      FEE: '0.02'
+      MIN_CONF: '0.55'
+      BACKFILL_DAYS: '7'
+      RUN_SECONDS: '20100'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run the bot
+        run: python3 bot.py
