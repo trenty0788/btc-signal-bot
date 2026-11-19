@@ -33,3 +33,4 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run the bot
         run: python3 bot.py
+         
