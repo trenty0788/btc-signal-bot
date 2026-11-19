@@ -1,1 +1,2 @@
 window_start_utc,signal_minute,bot_p_up,lean,polymarket_up_ask,polymarket_down_ask,bet,basis,net_edge,outcome,bet_result,book_imbalance_wide,book_imbalance_near,window_open,price_at_signal,coinbase_move_usd,close_call,result_source,coinbase_outcome
+2026-11-19T00:20:00Z,2,0.4559,DOWN,0.32,0.67,,edge,-0.1459,DOWN,,-0.1124,-0.1694,62608.84,62604.38,-6.24,yes,coinbase,DOWN

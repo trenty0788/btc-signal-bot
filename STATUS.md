@@ -1,21 +1,21 @@
 # BTC 5-minute signal bot
 
-Last update: **Nov 18 7:22 PM ET** (this job started Nov 18 7:22 PM ET)
+Last update: **Nov 18 7:27 PM ET** (this job started Nov 18 7:22 PM ET)
 
 ## Latest call
 
-**SKIP** for the window 7:20 PM to 7:25 PM
+**SKIP** for the window 7:25 PM to 7:30 PM
 
-Bot leans DOWN 54%, DOWN costs 67¢, edge -15¢ after fees.
+Bot leans UP 96%, UP costs 98¢, edge -4¢ after fees.
 
-Called at 7:22 PM. The result is known at 7:25 PM. Reload this page for the next call.
+Called at 7:27 PM. The result is known at 7:30 PM. Reload this page for the next call.
 
 ## Summary
 
-- Windows logged: **0**
+- Windows logged: **1**
 - Result confirmed by Polymarket: **0** (other windows use Coinbase's result until Polymarket's settles)
-- Polymarket prices captured: **0 of the last 0** windows
-- Bot's lean was right in **n/a** of the last 0 windows
+- Polymarket prices captured: **1 of the last 1** windows
+- Bot's lean was right in **100%** of the last 1 windows
 - Bot has learned from **2004** windows
 - Settings: signal 2 min in, minimum edge 2¢, fee allowance 2¢
 
@@ -23,7 +23,7 @@ Called at 7:22 PM. The result is known at 7:25 PM. Reload this page for the next
 
 Replays logged windows with a minimum edge, after the fee allowance. A few hundred bets are needed before this means much.
 
-**All windows with a price (0)**
+**All windows with a price (1)**
 
 | Min edge | Bets | Win rate | Avg per bet |
 |---|---|---|---|
@@ -63,5 +63,6 @@ Across 2004 windows the bot claimed 69% on average and was right 74%.
 
 | Window | Bot | Price | Bet | Result | Source |
 |---|---|---|---|---|---|
+| Nov 18 7:20 PM ET | DOWN 54% | 67¢ | skip | DOWN | Coinbase (close) |
 
 Signals are advice only. No trades are placed. Not financial advice.
