@@ -1,6 +1,16 @@
 # BTC 5-minute signal bot
 
-Last update: **Nov 18 6:53 PM ET** (this job started Nov 18 6:52 PM ET)
+Last update: **Nov 18 7:22 PM ET** (this job started Nov 18 7:22 PM ET)
+
+## Latest call
+
+**SKIP** for the window 7:20 PM to 7:25 PM
+
+Bot leans DOWN 54%, DOWN costs 67¢, edge -15¢ after fees.
+
+Called at 7:22 PM. The result is known at 7:25 PM. Reload this page for the next call.
+
+## Summary
 
 - Windows logged: **0**
 - Result confirmed by Polymarket: **0** (other windows use Coinbase's result until Polymarket's settles)
