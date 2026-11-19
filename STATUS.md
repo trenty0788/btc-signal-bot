@@ -1,14 +1,14 @@
 # BTC 5-minute signal bot
 
-Last update: **Nov 19 4:47 PM ET** (this job started Nov 19 12:10 PM ET)
+Last update: **Nov 19 4:52 PM ET** (this job started Nov 19 12:10 PM ET)
 
 ## Latest call
 
-**SKIP** for the window 4:15 PM to 4:20 PM
+**SKIP** for the window 4:50 PM to 4:55 PM
 
-Bot leans DOWN 99%, DOWN costs 99¢, edge -2¢ after fees.
+Bot leans UP 69%, UP costs 83¢, edge -16¢ after fees.
 
-Called at 4:17 PM. The result is known at 4:20 PM. Reload this page for the next call.
+Called at 4:52 PM. The result is known at 4:55 PM. Reload this page for the next call.
 
 ## Summary
 
