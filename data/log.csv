@@ -96,3 +96,4 @@ window_start_utc,signal_minute,bot_p_up,lean,polymarket_up_ask,polymarket_down_a
 2026-11-19T12:00:00Z,2,0.0141,DOWN,0.002,0.994,,edge,-0.0281,DOWN,,-0.1032,-0.4329,63879.11,63712.68,-150.75,no,polymarket,DOWN
 2026-11-19T12:05:00Z,2,0.7776,UP,0.91,0.08,,edge,-0.1524,DOWN,,-0.1967,0.2624,63728.37,63774.52,3.11,no,polymarket,UP
 2026-11-19T12:10:00Z,2,0.4578,DOWN,0.66,0.33,DOWN,edge,0.1922,UP,loss,-0.1406,-0.1393,63726.55,63712.98,18.09,yes,coinbase,UP
+2026-11-19T12:15:00Z,2,0.4412,DOWN,0.5,0.48,DOWN,edge,0.0588,DOWN,win,-0.2304,-0.2929,63744.64,63737.12,-27.84,yes,coinbase,DOWN
