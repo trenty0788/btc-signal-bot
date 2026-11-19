@@ -58,6 +58,7 @@ CB = "https://api.exchange.coinbase.com/products/BTC-USD"
 
 NOW = time.time       # replaceable so the bot can be tested on a fake clock
 SLEEP = time.sleep
+LATEST = None         # the most recent call, shown at the top of STATUS.md
 
 
 def say(*a):
@@ -438,6 +439,30 @@ def edge_table(rows):
     return md_table(["Min edge", "Bets", "Win rate", "Avg per bet"], body)
 
 
+def hm(ts):
+    try:
+        from zoneinfo import ZoneInfo
+        return datetime.fromtimestamp(ts, ZoneInfo("America/New_York")).strftime("%I:%M %p").lstrip("0")
+    except Exception:
+        return datetime.fromtimestamp(ts, timezone.utc).strftime("%H:%M UTC")
+
+
+def latest_call_md(cur):
+    """The newest call as a short block for the top of STATUS.md."""
+    if not cur:
+        return ["## Latest call", "", "Waiting for the next signal. A call appears about %d minutes into each 5-minute window." % M, ""]
+    lean, prob = cur["lean"], max(cur["p"], 1 - cur["p"])
+    ask = cur["upAsk"] if lean == "UP" else cur["dnAsk"]
+    head = ("**%s BET %s**" % ("▲" if cur["bet"] == "UP" else "▼", cur["bet"])) if cur["bet"] else "**SKIP**"
+    detail = "Bot leans %s %s" % (lean, pct(prob))
+    detail += (", %s costs %d¢" % (lean, round(ask * 100))) if ask is not None else ", no Polymarket price available"
+    if cur.get("net") is not None:
+        detail += ", edge %+d¢ after fees" % round(cur["net"] * 100)
+    return ["## Latest call", "", "%s for the window %s to %s" % (head, hm(cur["W"]), hm(cur["W"] + WINDOW)), "",
+            detail + ".", "",
+            "Called at %s. The result is known at %s. Reload this page for the next call." % (hm(cur.get("at", cur["W"])), hm(cur["W"] + WINDOW)), ""]
+
+
 def build_report(rows, model, started):
     now = NOW()
     priced = [r for r in rows if r.get("upAsk") is not None or r.get("dnAsk") is not None]
@@ -447,7 +472,8 @@ def build_report(rows, model, started):
     last100 = rows[-100:]
     right100 = sum(1 for r in last100 if r["lean"] == r["outcome"]) / len(last100) if last100 else None
     o = ["# BTC 5-minute signal bot", "",
-         "Last update: **%s** (this job started %s)" % (et(now), et(started)), "",
+         "Last update: **%s** (this job started %s)" % (et(now), et(started)), ""] + latest_call_md(LATEST) + [
+         "## Summary", "",
          "- Windows logged: **%d**" % len(rows),
          "- Result confirmed by Polymarket: **%d** (other windows use Coinbase's result until Polymarket's settles)" % len(confirmed),
          "- Polymarket prices captured: **%d of the last %d** windows" % (cov, len(last50)),
@@ -545,7 +571,7 @@ def make_signal(W, model):
            "net": None if net is None else round(net, 4), "upAsk": odds["up"] if odds else None,
            "dnAsk": odds["down"] if odds else None, "imbW": round(imb[0], 4) if imb else None,
            "imbN": round(imb[1], 4) if imb else None, "open": c[W][0], "cur": c[W + M * 60 - 60][3],
-           "next": 0, "tries": 0}
+           "next": 0, "tries": 0, "at": NOW()}
     ask = cur["upAsk"] if lean == "UP" else cur["dnAsk"]
     say("%s  leans %s %d%%  price %s  ->  %s" % (et(W), lean, round(conf * 100),
         "n/a" if ask is None else "%d¢" % round(ask * 100), ("BET " + bet) if bet else "skip"))
@@ -617,6 +643,7 @@ def run():
         push()
     say("Running. %d windows logged so far. Signal %d min into each window." % (len(rows), M))
     end_at = NOW() + RUN_SECONDS
+    global LATEST
     cur, last_sig, sig_retry, next_rec, errors = None, 0, 0, 0, 0
     next_try = {}
     last_push = NOW()
@@ -639,6 +666,10 @@ def run():
                         sig_retry = now + 6
                     else:
                         last_sig = W
+                        LATEST = cur
+                        save_all(model, rows, started)   # publish the new call right away
+                        push()
+                        last_push = NOW()
                 elif now >= next_rec and not (M * 60 - 15 < ph < M * 60 + 55):
                     next_rec = now + 30
                     reconcile(rows, by_w, next_try, now)
