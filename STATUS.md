@@ -1,29 +1,29 @@
 # BTC 5-minute signal bot
 
-Last update: **Nov 19 3:57 PM ET** (this job started Nov 19 12:10 PM ET)
+Last update: **Nov 19 4:02 PM ET** (this job started Nov 19 12:10 PM ET)
 
 ## Latest call
 
-**SKIP** for the window 3:55 PM to 4:00 PM
+**▼ BET DOWN** for the window 4:00 PM to 4:05 PM
 
-Bot leans DOWN 87%, DOWN costs 98¢, edge -13¢ after fees.
+Bot leans DOWN 86%, DOWN costs 82¢, edge +2¢ after fees.
 
-Called at 3:57 PM. The result is known at 4:00 PM. Reload this page for the next call.
+Called at 4:02 PM. The result is known at 4:05 PM. Reload this page for the next call.
 
 ## Summary
 
-- Windows logged: **185**
-- Result confirmed by Polymarket: **184** (other windows use Coinbase's result until Polymarket's settles)
+- Windows logged: **186**
+- Result confirmed by Polymarket: **185** (other windows use Coinbase's result until Polymarket's settles)
 - Polymarket prices captured: **50 of the last 50** windows
-- Bot's lean was right in **77%** of the last 100 windows
-- Bot has learned from **2188** windows
+- Bot's lean was right in **78%** of the last 100 windows
+- Bot has learned from **2189** windows
 - Settings: signal 2 min in, minimum edge 2¢, fee allowance 2¢
 
 ## Versus Polymarket prices
 
 Replays logged windows with a minimum edge, after the fee allowance. A few hundred bets are needed before this means much.
 
-**All windows with a price (185)**
+**All windows with a price (186)**
 
 | Min edge | Bets | Win rate | Avg per bet |
 |---|---|---|---|
@@ -33,7 +33,7 @@ Replays logged windows with a minimum edge, after the fee allowance. A few hundr
 | +6¢ | 34 | 56% | -0.8¢ |
 | +8¢ | 26 | 54% | -0.4¢ |
 
-**Only windows whose result Polymarket confirmed (184)**
+**Only windows whose result Polymarket confirmed (185)**
 
 | Min edge | Bets | Win rate | Avg per bet |
 |---|---|---|---|
@@ -47,12 +47,12 @@ Unconfirmed close calls (Coinbase moved under $50) among bets at your minimum ed
 
 ## Calibration
 
-Across 2188 windows the bot claimed 70% on average and was right 74%.
+Across 2189 windows the bot claimed 70% on average and was right 74%.
 
 | Bot said | Windows | Avg said | Right |
 |---|---|---|---|
 | 50-55% | 324 | 52% | 58% |
-| 55-60% | 315 | 57% | 65% |
+| 55-60% | 316 | 57% | 66% |
 | 60-65% | 267 | 62% | 66% |
 | 65-70% | 283 | 68% | 73% |
 | 70-80% | 445 | 75% | 77% |
@@ -63,7 +63,8 @@ Across 2188 windows the bot claimed 70% on average and was right 74%.
 
 | Window | Bot | Price | Bet | Result | Source |
 |---|---|---|---|---|---|
-| Nov 19 3:50 PM ET | UP 60% | 81¢ | skip | UP | Coinbase (close) |
+| Nov 19 3:55 PM ET | DOWN 87% | 98¢ | skip | DOWN | Coinbase |
+| Nov 19 3:50 PM ET | UP 60% | 81¢ | skip | UP | Polymarket |
 | Nov 19 3:45 PM ET | DOWN 51% | 36¢ | DOWN | UP ✗ | Polymarket |
 | Nov 19 3:40 PM ET | DOWN 58% | 36¢ | DOWN | UP ✗ | Polymarket |
 | Nov 19 3:35 PM ET | UP 91% | 95¢ | skip | UP | Polymarket |
@@ -74,6 +75,5 @@ Across 2188 windows the bot claimed 70% on average and was right 74%.
 | Nov 19 3:10 PM ET | DOWN 95% | 96¢ | skip | DOWN | Polymarket |
 | Nov 19 3:05 PM ET | DOWN 57% | 47¢ | DOWN | DOWN ✓ | Polymarket |
 | Nov 19 3:00 PM ET | DOWN 92% | 77¢ | DOWN | DOWN ✓ | Polymarket |
-| Nov 19 2:55 PM ET | DOWN 87% | 86¢ | skip | DOWN | Polymarket |
 
 Signals are advice only. No trades are placed. Not financial advice.
