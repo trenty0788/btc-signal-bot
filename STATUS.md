@@ -1,18 +1,18 @@
 # BTC 5-minute signal bot
 
-Last update: **Nov 20 12:27 PM ET** (this job started Nov 20 10:31 AM ET)
+Last update: **Nov 20 12:32 PM ET** (this job started Nov 20 10:31 AM ET)
 
 ## Latest call
 
-**SKIP** for the window 12:25 PM to 12:30 PM
+**▼ BET DOWN** for the window 12:30 PM to 12:35 PM
 
-Bot leans DOWN 93%, DOWN costs 95¢, edge -4¢ after fees.
+Bot leans DOWN 81%, DOWN costs 72¢, edge +7¢ after fees.
 
-Called at 12:27 PM. The result is known at 12:30 PM. Reload this page for the next call.
+Called at 12:32 PM. The result is known at 12:35 PM. Reload this page for the next call.
 
 ## Summary
 
-- Windows logged: **340**
+- Windows logged: **341**
 - Result confirmed by Polymarket: **340** (other windows use Coinbase's result until Polymarket's settles)
 - Polymarket prices captured: **50 of the last 50** windows
 - Bot's lean was right in **82%** of the last 100 windows
@@ -23,7 +23,7 @@ Called at 12:27 PM. The result is known at 12:30 PM. Reload this page for the ne
 
 Replays logged windows with a minimum edge, after the fee allowance. A few hundred bets are needed before this means much.
 
-**All windows with a price (340)**
+**All windows with a price (341)**
 
 | Min edge | Bets | Win rate | Avg per bet |
 |---|---|---|---|
@@ -63,6 +63,7 @@ Across 2344 windows the bot claimed 70% on average and was right 74%.
 
 | Window | Bot | Price | Bet | Result | Source |
 |---|---|---|---|---|---|
+| Nov 20 12:25 PM ET | DOWN 93% | 95¢ | skip | DOWN | Coinbase |
 | Nov 20 12:15 PM ET | UP 70% | 70¢ | skip | UP | Polymarket |
 | Nov 20 12:10 PM ET | UP 52% | 33¢ | UP | DOWN ✗ | Polymarket |
 | Nov 20 12:05 PM ET | UP 83% | 78¢ | UP | UP ✓ | Polymarket |
@@ -74,6 +75,5 @@ Across 2344 windows the bot claimed 70% on average and was right 74%.
 | Nov 20 11:35 AM ET | UP 95% | 97¢ | skip | UP | Polymarket |
 | Nov 20 11:30 AM ET | UP 52% | 54¢ | skip | UP | Polymarket |
 | Nov 20 11:25 AM ET | DOWN 87% | 91¢ | skip | DOWN | Polymarket |
-| Nov 20 11:20 AM ET | DOWN 65% | 67¢ | skip | UP | Polymarket |
 
 Signals are advice only. No trades are placed. Not financial advice.
