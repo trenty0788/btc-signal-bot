@@ -1,18 +1,18 @@
 # BTC 5-minute signal bot
 
-Last update: **Nov 20 4:47 PM ET** (this job started Nov 20 4:06 PM ET)
+Last update: **Nov 20 4:52 PM ET** (this job started Nov 20 4:06 PM ET)
 
 ## Latest call
 
-**SKIP** for the window 4:45 PM to 4:50 PM
+**SKIP** for the window 4:50 PM to 4:55 PM
 
-Bot leans DOWN 98%, DOWN costs 99¢, edge -3¢ after fees.
+Bot leans DOWN 83%, DOWN costs 95¢, edge -14¢ after fees.
 
-Called at 4:47 PM. The result is known at 4:50 PM. Reload this page for the next call.
+Called at 4:52 PM. The result is known at 4:55 PM. Reload this page for the next call.
 
 ## Summary
 
-- Windows logged: **364**
+- Windows logged: **365**
 - Result confirmed by Polymarket: **363** (other windows use Coinbase's result until Polymarket's settles)
 - Polymarket prices captured: **50 of the last 50** windows
 - Bot's lean was right in **82%** of the last 100 windows
@@ -23,7 +23,7 @@ Called at 4:47 PM. The result is known at 4:50 PM. Reload this page for the next
 
 Replays logged windows with a minimum edge, after the fee allowance. A few hundred bets are needed before this means much.
 
-**All windows with a price (364)**
+**All windows with a price (365)**
 
 | Min edge | Bets | Win rate | Avg per bet |
 |---|---|---|---|
@@ -63,6 +63,7 @@ Across 2367 windows the bot claimed 70% on average and was right 75%.
 
 | Window | Bot | Price | Bet | Result | Source |
 |---|---|---|---|---|---|
+| Nov 20 4:45 PM ET | DOWN 98% | 99¢ | skip | DOWN | Coinbase |
 | Nov 20 4:40 PM ET | UP 98% | 98¢ | skip | UP | Coinbase |
 | Nov 20 4:35 PM ET | UP 65% | 83¢ | skip | UP | Polymarket |
 | Nov 20 4:30 PM ET | UP 64% | 43¢ | UP | UP ✓ | Polymarket |
@@ -74,6 +75,5 @@ Across 2367 windows the bot claimed 70% on average and was right 75%.
 | Nov 20 1:40 PM ET | DOWN 95% | 98¢ | skip | DOWN | Polymarket |
 | Nov 20 1:35 PM ET | UP 66% | 83¢ | skip | UP | Polymarket |
 | Nov 20 1:30 PM ET | DOWN 86% | 90¢ | skip | DOWN | Polymarket |
-| Nov 20 1:25 PM ET | DOWN 85% | 77¢ | DOWN | DOWN ✓ | Polymarket |
 
 Signals are advice only. No trades are placed. Not financial advice.
