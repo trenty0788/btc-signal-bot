@@ -1,18 +1,18 @@
 # BTC 5-minute signal bot
 
-Last update: **Nov 20 2:02 PM ET** (this job started Nov 20 10:31 AM ET)
+Last update: **Nov 20 2:07 PM ET** (this job started Nov 20 10:31 AM ET)
 
 ## Latest call
 
-**SKIP** for the window 2:00 PM to 2:05 PM
+**SKIP** for the window 2:05 PM to 2:10 PM
 
-Bot leans DOWN 78%, DOWN costs 82¢, edge -6¢ after fees.
+Bot leans UP 55%, UP costs 61¢, edge -8¢ after fees.
 
-Called at 2:02 PM. The result is known at 2:05 PM. Reload this page for the next call.
+Called at 2:07 PM. The result is known at 2:10 PM. Reload this page for the next call.
 
 ## Summary
 
-- Windows logged: **358**
+- Windows logged: **359**
 - Result confirmed by Polymarket: **358** (other windows use Coinbase's result until Polymarket's settles)
 - Polymarket prices captured: **50 of the last 50** windows
 - Bot's lean was right in **82%** of the last 100 windows
@@ -23,7 +23,7 @@ Called at 2:02 PM. The result is known at 2:05 PM. Reload this page for the next
 
 Replays logged windows with a minimum edge, after the fee allowance. A few hundred bets are needed before this means much.
 
-**All windows with a price (358)**
+**All windows with a price (359)**
 
 | Min edge | Bets | Win rate | Avg per bet |
 |---|---|---|---|
@@ -63,6 +63,7 @@ Across 2362 windows the bot claimed 70% on average and was right 75%.
 
 | Window | Bot | Price | Bet | Result | Source |
 |---|---|---|---|---|---|
+| Nov 20 2:00 PM ET | DOWN 78% | 82¢ | skip | DOWN | Coinbase |
 | Nov 20 1:50 PM ET | UP 78% | 75¢ | skip | UP | Polymarket |
 | Nov 20 1:45 PM ET | DOWN 98% | 93¢ | DOWN | DOWN ✓ | Polymarket |
 | Nov 20 1:40 PM ET | DOWN 95% | 98¢ | skip | DOWN | Polymarket |
@@ -74,6 +75,5 @@ Across 2362 windows the bot claimed 70% on average and was right 75%.
 | Nov 20 1:10 PM ET | DOWN 95% | 87¢ | DOWN | DOWN ✓ | Polymarket |
 | Nov 20 1:05 PM ET | DOWN 72% | 68¢ | skip | DOWN | Polymarket |
 | Nov 20 1:00 PM ET | DOWN 85% | 87¢ | skip | DOWN | Polymarket |
-| Nov 20 12:55 PM ET | DOWN 53% | 40¢ | DOWN | UP ✗ | Polymarket |
 
 Signals are advice only. No trades are placed. Not financial advice.
