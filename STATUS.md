@@ -1,18 +1,18 @@
 # BTC 5-minute signal bot
 
-Last update: **Nov 20 2:42 PM ET** (this job started Nov 20 10:31 AM ET)
+Last update: **Nov 20 2:47 PM ET** (this job started Nov 20 10:31 AM ET)
 
 ## Latest call
 
-**SKIP** for the window 2:40 PM to 2:45 PM
+**SKIP** for the window 2:45 PM to 2:50 PM
 
-Bot leans UP 61%, UP costs 65¢, edge -6¢ after fees.
+Bot leans DOWN 85%, DOWN costs 90¢, edge -7¢ after fees.
 
-Called at 2:42 PM. The result is known at 2:45 PM. Reload this page for the next call.
+Called at 2:47 PM. The result is known at 2:50 PM. Reload this page for the next call.
 
 ## Summary
 
-- Windows logged: **366**
+- Windows logged: **367**
 - Result confirmed by Polymarket: **365** (other windows use Coinbase's result until Polymarket's settles)
 - Polymarket prices captured: **50 of the last 50** windows
 - Bot's lean was right in **79%** of the last 100 windows
@@ -23,7 +23,7 @@ Called at 2:42 PM. The result is known at 2:45 PM. Reload this page for the next
 
 Replays logged windows with a minimum edge, after the fee allowance. A few hundred bets are needed before this means much.
 
-**All windows with a price (366)**
+**All windows with a price (367)**
 
 | Min edge | Bets | Win rate | Avg per bet |
 |---|---|---|---|
@@ -63,6 +63,7 @@ Across 2369 windows the bot claimed 70% on average and was right 75%.
 
 | Window | Bot | Price | Bet | Result | Source |
 |---|---|---|---|---|---|
+| Nov 20 2:40 PM ET | UP 61% | 65¢ | skip | UP | Coinbase |
 | Nov 20 2:35 PM ET | UP 91% | 95¢ | skip | UP | Coinbase |
 | Nov 20 2:30 PM ET | DOWN 93% | 85¢ | DOWN | DOWN ✓ | Polymarket |
 | Nov 20 2:25 PM ET | DOWN 56% | 59¢ | skip | UP | Polymarket |
@@ -74,6 +75,5 @@ Across 2369 windows the bot claimed 70% on average and was right 75%.
 | Nov 20 1:50 PM ET | UP 78% | 75¢ | skip | UP | Polymarket |
 | Nov 20 1:45 PM ET | DOWN 98% | 93¢ | DOWN | DOWN ✓ | Polymarket |
 | Nov 20 1:40 PM ET | DOWN 95% | 98¢ | skip | DOWN | Polymarket |
-| Nov 20 1:35 PM ET | UP 66% | 83¢ | skip | UP | Polymarket |
 
 Signals are advice only. No trades are placed. Not financial advice.
