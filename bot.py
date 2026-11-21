@@ -43,6 +43,8 @@ BACKFILL_DAYS = int(env_num("BACKFILL_DAYS", 7))
 RUN_SECONDS = int(env_num("RUN_SECONDS", 20100))   # how long one job keeps making signals (5h35m)
 PUSH_EVERY = 1800                              # seconds between commits of the data files
 TRAIN_FALLBACK = 1500                          # learn from Coinbase's result if Polymarket's has not settled by then
+TRACK_EVERY = 20                               # seconds between price checks while a window is running (limit order study)
+LIMIT_OFFSETS = (0, 0.02, 0.04, 0.06, 0.08)    # limit prices tested: the bot's fair price minus each of these
 
 WINDOW = 300
 EXTRA = 2
@@ -135,7 +137,9 @@ def get_odds(W):
         ids = parse_listish(mk["clobTokenIds"])
         iu, idn = outs.index("up"), outs.index("down")
         up, dn = live_ask(ids[iu]), live_ask(ids[idn])
-        return None if up is None and dn is None else {"up": up, "down": dn}
+        if up is None and dn is None:
+            return None
+        return {"up": up, "down": dn, "ids": {"up": ids[iu], "down": ids[idn]}}
     except Exception:
         return None
 
@@ -361,7 +365,8 @@ def is_close(r):
 # ---------------------------------------------------------------- log file
 HEAD = ["window_start_utc", "signal_minute", "bot_p_up", "lean", "polymarket_up_ask", "polymarket_down_ask",
         "bet", "basis", "net_edge", "outcome", "bet_result", "book_imbalance_wide", "book_imbalance_near",
-        "window_open", "price_at_signal", "coinbase_move_usd", "close_call", "result_source", "coinbase_outcome"]
+        "window_open", "price_at_signal", "coinbase_move_usd", "close_call", "result_source", "coinbase_outcome",
+        "lean_min_ask", "lean_ask_path"]
 
 
 def fnum(s):
@@ -385,7 +390,8 @@ def write_log(rows):
                         "" if r.get("imbW") is None else r["imbW"], "" if r.get("imbN") is None else r["imbN"],
                         r.get("open", ""), r.get("cur", ""), r.get("mv", ""),
                         ("yes" if is_close(r) else "no") if isinstance(r.get("mv"), (int, float)) else "",
-                        "polymarket" if r["src"] == "polymarket" else "coinbase", r["cb"]])
+                        "polymarket" if r["src"] == "polymarket" else "coinbase", r["cb"],
+                        "" if r.get("lmin") is None else r["lmin"], r.get("lpath", "")])
     os.replace(tmp, LOG_FILE)
 
 
@@ -405,7 +411,8 @@ def load_log():
                     "outcome": d["outcome"], "src": "polymarket" if d["result_source"] == "polymarket" else "coinbase",
                     "cb": d["coinbase_outcome"] or d["outcome"], "imbW": fnum(d["book_imbalance_wide"]),
                     "imbN": fnum(d["book_imbalance_near"]), "open": fnum(d["window_open"]),
-                    "cur": fnum(d["price_at_signal"]), "mv": fnum(d["coinbase_move_usd"])})
+                    "cur": fnum(d["price_at_signal"]), "mv": fnum(d["coinbase_move_usd"]),
+                    "lmin": fnum(d.get("lean_min_ask")), "lpath": d.get("lean_ask_path") or ""})
     except Exception as e:
         say("Could not fully read the log (%s); continuing with %d rows." % (e, len(rows)))
     return rows
@@ -432,11 +439,49 @@ def md_table(head, body):
 
 def edge_table(rows):
     body = []
-    for thr in (0, 0.02, 0.04, 0.06, 0.08):
+    # "Every call" acts as if every call, even a skip, had been bought at the price shown when it was made.
+    for thr, name in ((-1.0, "Every call"), (0, "+0¢"), (0.02, "+2¢"), (0.04, "+4¢"), (0.06, "+6¢"), (0.08, "+8¢")):
         n, w, avg = evaluate(rows, thr, FEE)
-        body.append(["+%d¢" % round(thr * 100), n, pct(w / n) if n else "—",
-                     "—" if avg is None else "%+.1f¢" % (avg * 100)])
+        body.append([name, n, pct(w / n) if n else "—", "—" if avg is None else "%+.1f¢" % (avg * 100)])
     return md_table(["Min edge", "Bets", "Win rate", "Avg per bet"], body)
+
+
+def limit_sim(rows):
+    """Limit order study on skipped windows. A resting buy order at price L on the bot's lean is assumed filled if the
+    lowest ask seen during the window reached L or lower. That is optimistic: a real order may not be filled."""
+    skipped = [r for r in rows if not r.get("bet") and r.get("lmin") is not None]
+    out = []
+    for off in LIMIT_OFFSETS:
+        n = f = w = 0
+        s = 0.0
+        for r in skipped:
+            L = max(r["p"], 1 - r["p"]) - off
+            if L <= 0.01:
+                continue
+            n += 1
+            if r["lmin"] <= L + 1e-9:
+                f += 1
+                win = r["outcome"] == r["lean"]
+                w += 1 if win else 0
+                s += (1 - L if win else -L) - FEE
+        out.append((off, n, f, w, s))
+    return len(skipped), out
+
+
+def limit_section(rows):
+    n_sk, res = limit_sim(rows)
+    o = ["## Limit order test", "",
+         "What if a skipped call had been turned into a limit buy on the bot's lean, placed at its fair price minus a margin? "
+         "The bot checks Polymarket's price every %d seconds and counts an order as filled if the lowest ask reached your price. "
+         "That flatters the result, since a real order can sit unfilled even when the price touches it. Skipped windows tracked: **%d**." % (TRACK_EVERY, n_sk), ""]
+    body = []
+    for off, n, f, w, s in res:
+        body.append(["Fair" if off == 0 else "Fair −%d¢" % round(off * 100), n, f, pct(f / n) if n else "—",
+                     pct(w / f) if f else "—", "—" if not f else "%+.1f¢" % (s / f * 100),
+                     "—" if not n else "%+.1f¢" % (s / n * 100)])
+    o += [md_table(["Limit price", "Windows", "Filled", "Fill rate", "Won when filled", "Avg per fill", "Avg per window"], body), "",
+          "If \"Won when filled\" sits below the price you paid, the fills are catching windows that moved against you.", ""]
+    return o
 
 
 def hm(ts):
@@ -486,8 +531,9 @@ def build_report(rows, model, started):
          "**Only windows whose result Polymarket confirmed (%d)**" % len([r for r in priced if r["src"] == "polymarket"]), "",
          edge_table([r for r in priced if r["src"] == "polymarket"]), ""]
     close_bets = [r for r in priced if is_close(r) and (best_side(r["p"], r.get("upAsk"), r.get("dnAsk"), FEE) or {"net": -9})["net"] >= MIN_EDGE - 1e-9]
-    o += ["Unconfirmed close calls (Coinbase moved under $%d) among bets at your minimum edge: **%d**" % (CLOSE_USD, len(close_bets)), "",
-          "## Calibration", ""]
+    o += ["Unconfirmed close calls (Coinbase moved under $%d) among bets at your minimum edge: **%d**" % (CLOSE_USD, len(close_bets)), ""]
+    o += limit_section(rows)
+    o += ["## Calibration", ""]
     tot = sum(r[0] for r in model.calib)
     if tot:
         said = sum(r[1] for r in model.calib) / tot
@@ -571,11 +617,42 @@ def make_signal(W, model):
            "net": None if net is None else round(net, 4), "upAsk": odds["up"] if odds else None,
            "dnAsk": odds["down"] if odds else None, "imbW": round(imb[0], 4) if imb else None,
            "imbN": round(imb[1], 4) if imb else None, "open": c[W][0], "cur": c[W + M * 60 - 60][3],
-           "next": 0, "tries": 0, "at": NOW()}
+           "next": 0, "tries": 0, "at": NOW(), "tokens": (odds or {}).get("ids"), "track": [],
+           "poll_at": NOW() + TRACK_EVERY}
     ask = cur["upAsk"] if lean == "UP" else cur["dnAsk"]
+    if ask is not None:
+        cur["track"].append((int(NOW() - W), ask))
     say("%s  leans %s %d%%  price %s  ->  %s" % (et(W), lean, round(conf * 100),
         "n/a" if ask is None else "%d¢" % round(ask * 100), ("BET " + bet) if bet else "skip"))
     return cur
+
+
+def poll_track(cur, now):
+    """While the window runs, note the price of the side the bot leans toward (for the limit order test)."""
+    tok = (cur.get("tokens") or {}).get("up" if cur["lean"] == "UP" else "down")
+    if not tok:
+        cur["poll_at"] = float("inf")
+        return
+    cur["poll_at"] = now + TRACK_EVERY
+    a = live_ask(tok)
+    if a is not None:
+        cur["track"].append((int(now - cur["W"]), a))
+
+
+def write_live(cur, rows):
+    """A small file the live web page reads to show the newest call without a reload."""
+    last = rows[-1] if rows else None
+    d = {"updated": int(NOW()), "W": cur["W"], "m": cur["m"], "at": int(cur["at"]), "window": WINDOW,
+         "p": cur["p"], "lean": cur["lean"], "conf": round(max(cur["p"], 1 - cur["p"]), 4),
+         "bet": cur["bet"], "basis": cur["basis"], "net": cur["net"], "upAsk": cur["upAsk"], "dnAsk": cur["dnAsk"],
+         "open": cur["open"], "cur": cur["cur"], "tokens": cur.get("tokens"), "fee": FEE, "minEdge": MIN_EDGE,
+         "last": ({"W": last["W"], "lean": last["lean"], "bet": last["bet"], "outcome": last["outcome"], "src": last["src"]}
+                  if last else None)}
+    os.makedirs(DATA_DIR, exist_ok=True)
+    tmp = os.path.join(DATA_DIR, "live.json.tmp")
+    with open(tmp, "w") as f:
+        json.dump(d, f)
+    os.replace(tmp, os.path.join(DATA_DIR, "live.json"))
 
 
 def finish_window(cur, rows, by_w, model):
@@ -591,7 +668,10 @@ def finish_window(cur, rows, by_w, model):
         return cur
     outcome = "UP" if y == 1 else "DOWN"
     row = {k: cur[k] for k in ("W", "m", "p", "lean", "upAsk", "dnAsk", "bet", "basis", "net", "imbW", "imbN", "open", "cur")}
-    row.update({"outcome": outcome, "src": "coinbase", "cb": outcome, "mv": round(c[W + 240][3] - c[W][0], 2)})
+    tr = cur.get("track") or []
+    row.update({"outcome": outcome, "src": "coinbase", "cb": outcome, "mv": round(c[W + 240][3] - c[W][0], 2),
+                "lmin": min(a for _, a in tr) if tr else None,
+                "lpath": "|".join("%d:%.2f" % (t, a) for t, a in tr)})
     rows.append(row)
     by_w[W] = row
     model.pending.append({"W": W, "x": [round(v, 5) for v in cur["x"]], "p": cur["p"], "called": cur["called"], "y": y})
@@ -660,6 +740,8 @@ def run():
                         cur = finish_window(cur, rows, by_w, model)
                         if cur is None:
                             save_all(model, rows, started)
+                    elif now < cur["W"] + WINDOW and now >= cur.get("poll_at", 0):
+                        poll_track(cur, now)
                 elif now < end_at and last_sig != W and M * 60 + 3 <= ph < M * 60 + 45 and now >= sig_retry:
                     cur = make_signal(W, model)
                     if cur is None:
@@ -667,6 +749,7 @@ def run():
                     else:
                         last_sig = W
                         LATEST = cur
+                        write_live(cur, rows)
                         save_all(model, rows, started)   # publish the new call right away
                         push()
                         last_push = NOW()
