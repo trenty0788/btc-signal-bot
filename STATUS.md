@@ -1,29 +1,40 @@
 # BTC 5-minute signal bot
 
-Last update: **Nov 20 11:17 PM ET** (this job started Nov 20 9:40 PM ET)
+Last update: **Nov 20 11:22 PM ET** (this job started Nov 20 9:40 PM ET)
 
 ## Latest call
 
-**▲ BET UP** for the window 11:15 PM to 11:20 PM
+**▲ BET UP** for the window 11:20 PM to 11:25 PM
 
-Bot leans UP 51%, UP costs 27¢, edge +22¢ after fees.
+Bot leans UP 55%, UP costs 41¢, edge +12¢ after fees.
 
-Called at 11:17 PM. The result is known at 11:20 PM. Reload this page for the next call.
+Called at 11:22 PM. The result is known at 11:25 PM. Reload this page for the next call.
 
 ## Summary
 
-- Windows logged: **436**
-- Result confirmed by Polymarket: **435** (other windows use Coinbase's result until Polymarket's settles)
+- Windows logged: **437**
+- Result confirmed by Polymarket: **436** (other windows use Coinbase's result until Polymarket's settles)
 - Polymarket prices captured: **50 of the last 50** windows
-- Bot's lean was right in **83%** of the last 100 windows
-- Bot has learned from **2439** windows
+- Bot's lean was right in **82%** of the last 100 windows
+- Bot has learned from **2440** windows
 - Settings: signal 2 min in, minimum edge 2¢, fee allowance 2¢
 
 ## Versus Polymarket prices
 
 Replays logged windows with a minimum edge, after the fee allowance. A few hundred bets are needed before this means much.
 
-**All windows with a price (436)**
+**All windows with a price (437)**
+
+| Min edge | Bets | Win rate | Avg per bet |
+|---|---|---|---|
+| Every call | 437 | 79% | -0.0¢ |
+| +0¢ | 150 | 71% | +5.3¢ |
+| +2¢ | 120 | 68% | +4.8¢ |
+| +4¢ | 100 | 65% | +4.4¢ |
+| +6¢ | 78 | 63% | +6.1¢ |
+| +8¢ | 58 | 59% | +6.6¢ |
+
+**Only windows whose result Polymarket confirmed (436)**
 
 | Min edge | Bets | Win rate | Avg per bet |
 |---|---|---|---|
@@ -34,18 +45,7 @@ Replays logged windows with a minimum edge, after the fee allowance. A few hundr
 | +6¢ | 77 | 64% | +6.5¢ |
 | +8¢ | 57 | 60% | +7.2¢ |
 
-**Only windows whose result Polymarket confirmed (435)**
-
-| Min edge | Bets | Win rate | Avg per bet |
-|---|---|---|---|
-| Every call | 435 | 79% | -0.0¢ |
-| +0¢ | 149 | 72% | +5.5¢ |
-| +2¢ | 119 | 68% | +5.1¢ |
-| +4¢ | 99 | 66% | +4.7¢ |
-| +6¢ | 77 | 64% | +6.5¢ |
-| +8¢ | 57 | 60% | +7.2¢ |
-
-Unconfirmed close calls (Coinbase moved under $50) among bets at your minimum edge: **0**
+Unconfirmed close calls (Coinbase moved under $50) among bets at your minimum edge: **1**
 
 ## Limit order test
 
@@ -63,7 +63,7 @@ If "Won when filled" sits below the price you paid, the fills are catching windo
 
 ## Calibration
 
-Across 2439 windows the bot claimed 71% on average and was right 75%.
+Across 2440 windows the bot claimed 71% on average and was right 75%.
 
 | Bot said | Windows | Avg said | Right |
 |---|---|---|---|
@@ -71,7 +71,7 @@ Across 2439 windows the bot claimed 71% on average and was right 75%.
 | 55-60% | 334 | 57% | 65% |
 | 60-65% | 293 | 62% | 67% |
 | 65-70% | 307 | 68% | 73% |
-| 70-80% | 503 | 75% | 77% |
+| 70-80% | 504 | 75% | 77% |
 | 80-90% | 403 | 85% | 89% |
 | 90%+ | 256 | 94% | 94% |
 
@@ -79,7 +79,8 @@ Across 2439 windows the bot claimed 71% on average and was right 75%.
 
 | Window | Bot | Price | Bet | Result | Source |
 |---|---|---|---|---|---|
-| Nov 20 11:10 PM ET | UP 70% | 76¢ | skip | UP | Coinbase |
+| Nov 20 11:15 PM ET | UP 51% | 27¢ | UP | DOWN ✗ | Coinbase (close) |
+| Nov 20 11:10 PM ET | UP 70% | 76¢ | skip | UP | Polymarket |
 | Nov 20 11:05 PM ET | DOWN 89% | 67¢ | DOWN | DOWN ✓ | Polymarket |
 | Nov 20 11:00 PM ET | UP 53% | 62¢ | skip | DOWN | Polymarket |
 | Nov 20 10:55 PM ET | UP 74% | 81¢ | skip | UP | Polymarket |
@@ -90,6 +91,5 @@ Across 2439 windows the bot claimed 71% on average and was right 75%.
 | Nov 20 10:30 PM ET | DOWN 100% | 99¢ | skip | DOWN | Polymarket |
 | Nov 20 10:25 PM ET | UP 67% | 71¢ | skip | DOWN | Polymarket |
 | Nov 20 10:20 PM ET | UP 63% | 73¢ | skip | UP | Polymarket |
-| Nov 20 10:15 PM ET | DOWN 88% | 93¢ | skip | DOWN | Polymarket |
 
 Signals are advice only. No trades are placed. Not financial advice.
