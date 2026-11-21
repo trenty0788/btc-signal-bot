@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BTC Live Signal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Layout: one narrow phone column. The newest call sits on top, the last result under it, and a bar fixed to the bottom
+   follows the call as a paper trade while its 5-minute window runs. */
+:root {
+  --bg: #f1f4f7;
+  --surface: #ffffff;
+  --fg: #12171c;
+  --muted: #55616d;
+  --line: #d9dfe5;
+  --accent: #1f4fcf;
+  --up: #0c7a45;
+  --up-bg: #e1f3e9;
+  --down: #b8301f;
+  --down-bg: #fae6e2;
+  --flat: #5b6672;
+  --flat-bg: #e9edf1;
+  --warn: #9a6200;
+  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1217; --surface: #161c22; --fg: #e7ebef; --muted: #93a0ac; --line: #27303a; --accent: #7fa3ff;
+    --up: #4fd18b; --up-bg: #0f2a1d; --down: #ff8173; --down-bg: #341a17; --flat: #9aa6b2; --flat-bg: #1e252c; --warn: #f0b24a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1217; --surface: #161c22; --fg: #e7ebef; --muted: #93a0ac; --line: #27303a; --accent: #7fa3ff;
+  --up: #4fd18b; --up-bg: #0f2a1d; --down: #ff8173; --down-bg: #341a17; --flat: #9aa6b2; --flat-bg: #1e252c; --warn: #f0b24a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.45;
+  padding-top: max(18px, env(safe-area-inset-top, 0px));
+  padding-bottom: calc(130px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+h1 { font-family: var(--font-display); font-size: 20px; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
+h2 { font-family: var(--font-display); font-size: 15px; font-weight: 700; margin: 0 0 8px; }
+.chip { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--flat); }
+.chip.ok .dot { background: var(--up); }
+.chip.slow .dot { background: var(--warn); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.panel.up { background: var(--up-bg); }
+.panel.down { background: var(--down-bg); }
+.win { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.sig { font-family: var(--font-display); font-weight: 700; font-size: 58px; line-height: 1; letter-spacing: -0.02em; color: var(--flat); }
+.up .sig { color: var(--up); }
+.down .sig { color: var(--down); }
+.conf { font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; min-height: 1.4em; }
+.fair { font-size: 13px; color: var(--muted); max-width: 52ch; }
+.prices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding-top: 8px; border-top: 1px solid var(--line); }
+.prices div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.k { font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.v { font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.count { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+.card p { margin: 0; font-size: 14px; }
+.note { font-size: 12px; color: var(--muted); margin: 0; max-width: 60ch; }
+.note a { color: var(--accent); }
+.err { color: var(--down); font-size: 13px; margin: 0; }
+.setup { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.setup input { font: inherit; background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; min-height: 40px; min-width: 0; flex: 1 1 140px; }
+.setup button { font: inherit; font-weight: 600; min-height: 40px; border-radius: 8px; border: 1px solid var(--accent); background: var(--accent); color: var(--bg); padding: 0 14px; cursor: pointer; }
+input:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* Bottom bar: the call treated as a trade, whether it was a bet or a skip */
+.bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
+  background: var(--surface); border-top: 1px solid var(--line);
+  padding-top: 10px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.bar-in { max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; }
+.bar-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; min-width: 0; }
+.pos { font-weight: 600; font-variant-numeric: tabular-nums; min-width: 0; overflow-wrap: anywhere; }
+.pos small { font-weight: 500; color: var(--muted); }
+.delta { font-variant-numeric: tabular-nums; font-weight: 700; }
+.delta.pos-up { color: var(--up); }
+.delta.pos-down { color: var(--down); }
+.meter { position: relative; height: 12px; border-radius: 6px; background: var(--flat-bg); overflow: hidden; }
+.meter i { display: block; height: 100%; width: 0; background: var(--flat); transition: width 0.6s ease, background-color 0.6s ease; }
+.meter.good i { background: var(--up); }
+.meter.bad i { background: var(--down); }
+.meter b { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: var(--fg); opacity: 0.35; }
+.label { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.left { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) { .meter i { transition: none; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="top">
+    <h1>BTC Live Signal</h1>
+    <span class="chip" id="chip"><span class="dot"></span><span id="chipText">Connecting</span></span>
+  </header>
+
+  <section class="panel flat" id="panel" aria-live="polite">
+    <div class="win" id="winLabel">Waiting for the bot's first call</div>
+    <div class="sig" id="sig">&mdash;</div>
+    <div class="conf" id="conf"></div>
+    <div class="fair" id="fair">Each call appears here by itself, about 2 minutes into every 5-minute window. You don't need to reload.</div>
+    <div class="prices">
+      <div><span class="k">Window open</span><span class="v" id="pOpen">&mdash;</span></div>
+      <div><span class="k">At call</span><span class="v" id="pNow">&mdash;</span></div>
+      <div><span class="k">Move</span><span class="v" id="pChg">&mdash;</span></div>
+    </div>
+    <div class="count" id="count"></div>
+  </section>
+
+  <section class="card" id="lastCard" hidden>
+    <h2>Last window</h2>
+    <p id="lastText"></p>
+  </section>
+
+  <section class="card" id="setupCard" hidden>
+    <h2>GitHub username</h2>
+    <p class="note">This page could not find your bot's data. Enter the GitHub username that owns the btc-signal-bot repository.</p>
+    <div class="setup">
+      <input id="ownerIn" type="text" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="username" aria-label="GitHub username">
+      <button id="ownerBtn" type="button">Save</button>
+    </div>
+  </section>
+
+  <p class="err" id="err" hidden></p>
+  <p class="note" id="foot">Signals are advice only and no trades are placed. Not financial advice.</p>
+</main>
+
+<div class="bar" id="bar" hidden>
+  <div class="bar-in">
+    <div class="bar-row">
+      <span class="pos" id="posText"></span>
+      <span class="delta" id="delta"></span>
+    </div>
+    <div class="meter" id="meter" role="img" aria-label="Confidence in this call"><i id="meterFill"></i><b></b></div>
+    <div class="bar-row">
+      <span class="label" id="confText"></span>
+      <span class="left" id="leftText"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==CORE==
+const NFEAT = 11, WINDOW = 300;
+const clip = (v, l) => Math.max(-l, Math.min(l, v));
+const mean = a => a.reduce((s, v) => s + v, 0) / a.length;
+const std = a => { if (a.length < 2) return 0; const m = mean(a); return Math.sqrt(a.reduce((s, v) => s + (v - m) * (v - m), 0) / a.length); };
+
+// c: Map of minute-start (unix seconds) -> [open, high, low, close, volume]
+// The same 9 price inputs the bot uses, plus the volatility scale s used to size the move since the window opened.
+function featuresRaw(c, W, m) {
+  const tEnd = W + m * 60;
+  if (!c.has(W)) return null;
+  for (let t = tEnd - 1800; t < tEnd; t += 60) if (!c.has(t)) return null;
+  const closes = [], opens = [], vols = [];
+  for (let t = tEnd - 3600; t < tEnd; t += 60) {
+    const k = c.get(t);
+    if (k) { opens.push(k[0]); closes.push(k[3]); vols.push(k[4]); }
+  }
+  const n = closes.length;
+  const rets = [];
+  for (let i = 1; i < n; i++) rets.push(Math.log(closes[i] / closes[i - 1]));
+  const s = Math.max(std(rets.slice(-30)), 1e-5);
+  const cur = closes[n - 1];
+  const zWin = Math.log(cur / c.get(W)[0]) / (s * Math.sqrt(m));
+  const mom1 = rets[rets.length - 1] / s;
+  const mom3 = Math.log(cur / closes[n - 4]) / (s * Math.sqrt(3));
+  const mom15 = Math.log(cur / closes[n - 16]) / (s * Math.sqrt(15));
+  const s5 = Math.max(std(rets.slice(-5)), 1e-6);
+  const sAll = Math.max(std(rets), 1e-6);
+  const volRatio = Math.log(s5 / sAll);
+  const v3 = Math.max(mean(vols.slice(-3)), 1e-9);
+  const volSurge = Math.log(v3 / Math.max(mean(vols), 1e-9));
+  const L = Math.min(10, n);
+  let g = 0;
+  for (let i = n - L; i < n; i++) if (closes[i] > opens[i]) g++;
+  const green = (g / L - 0.5) * 4;
+  const d = new Date(tEnd * 1000);
+  const h = (d.getUTCHours() + d.getUTCMinutes() / 60) / 24 * 2 * Math.PI;
+  return { s: s, x: [clip(zWin, 4), clip(mom1, 4), clip(mom3, 4), clip(mom15, 4),
+                     clip(volRatio, 3), clip(volSurge, 3), green, Math.sin(h), Math.cos(h)] };
+}
+
+// (bid size - ask size) / total near the mid price, at 0.1% and 0.02% depth. Null if the book is unusable.
+function bookImbalance(book) {
+  try {
+    const bids = book.bids.map(r => [+r[0], +r[1]]), asks = book.asks.map(r => [+r[0], +r[1]]);
+    if (!bids.length || !asks.length) return null;
+    const bb = Math.max.apply(null, bids.map(r => r[0])), ba = Math.min.apply(null, asks.map(r => r[0]));
+    const mid = (bb + ba) / 2;
+    if (!(mid > 0) || ba < bb) return null;
+    const at = frac => {
+      let b = 0, a = 0;
+      for (const r of bids) if (r[0] >= mid * (1 - frac)) b += r[1];
+      for (const r of asks) if (r[0] <= mid * (1 + frac)) a += r[1];
+      return (a + b) > 0 ? (b - a) / (b + a) : 0;
+    };
+    return [at(0.001), at(0.0002)];
+  } catch (e) { return null; }
+}
+
+// Probability of UP from the bot's saved weights.
+function predictP(model, x) {
+  let z = model.b;
+  for (let i = 0; i < NFEAT; i++) z += model.w[i] * x[i];
+  z = Math.max(-30, Math.min(30, z));
+  return 1 / (1 + Math.exp(-z));
+}
+
+// Live inputs: the bot's inputs at the latest whole minute, but the move since the window opened uses the current price
+// and the exact time elapsed, so the estimate moves between minute marks.
+function liveInputs(c, W, nowS, price, imb) {
+  const el = nowS - W;
+  if (el < 60) return null;
+  const m = Math.min(4, Math.max(1, Math.floor(el / 60)));
+  const r = featuresRaw(c, W, m);
+  if (!r) return null;
+  const x = r.x.slice();
+  x[0] = clip(Math.log(price / c.get(W)[0]) / (r.s * Math.sqrt(Math.max(el / 60, 0.5))), 4);
+  return x.concat(imb ? [clip(imb[0] * 2, 2), clip(imb[1] * 2, 2)] : [0, 0]);
+}
+// ==/CORE==
+
+// ---------- setup ----------
+const $ = id => document.getElementById(id);
+const REPO = 'btc-signal-bot', BRANCH = 'main';
+const CB = 'https://api.exchange.coinbase.com/products/BTC-USD';
+const DEFAULT_OWNER = '';
+
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* ignore */ } }
+function findOwner() {
+  const q = new URLSearchParams(location.search).get('u');
+  if (q) { lsSet('btclive.owner', q); return q; }
+  const s = lsGet('btclive.owner');
+  if (s) return s;
+  if (/\.github\.io$/i.test(location.hostname)) return location.hostname.split('.')[0];
+  return DEFAULT_OWNER;
+}
+let owner = findOwner();
+
+// ---------- state ----------
+const S = { live: null, lastOk: 0, everOk: false, model: null, book: null, bookAt: 0, conf: null, mark: null, tick: 0, failures: 0 };
+
+async function fetchJSON(url, ms) {
+  const ctl = new AbortController();
+  const to = setTimeout(() => ctl.abort(), ms || 8000);
+  try {
+    const r = await fetch(url, { signal: ctl.signal, cache: 'no-store' });
+    if (!r.ok) return null;
+    return await r.json();
+  } catch (e) { return null; } finally { clearTimeout(to); }
+}
+// raw.githubusercontent caches each address for minutes, so a changing query string forces a fresh copy.
+const rawUrl = p => 'https://raw.githubusercontent.com/' + encodeURIComponent(owner) + '/' + REPO + '/' + BRANCH + '/' + p + '?t=' + Date.now();
+const iso = t => new Date(t * 1000).toISOString().replace(/\.\d+Z$/, 'Z');
+
+async function candles(start, end) {
+  const rows = await fetchJSON(CB + '/candles?granularity=60&start=' + iso(start) + '&end=' + iso(end), 8000);
+  if (!Array.isArray(rows)) return null;
+  const out = new Map();
+  for (const r of rows) out.set(r[0], [+r[3], +r[2], +r[1], +r[4], +r[5]]);
+  return out;
+}
+
+// ---------- formatting ----------
+const cents = v => Math.round(v * 100) + '¢';
+const signedCents = v => (v >= 0 ? '+' : '−') + Math.abs(Math.round(v * 100)) + '¢';
+const money = v => '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const hm = t => new Date(t * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+const mmss = s => { s = Math.max(0, Math.ceil(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+const nowS = () => Date.now() / 1000;
+const askOf = L => { const v = L.lean === 'UP' ? L.upAsk : L.dnAsk; return typeof v === 'number' ? v : null; };
+
+// ---------- polling ----------
+async function pollLive() {
+  if (!owner) { $('setupCard').hidden = false; render(); return; }
+  const j = await fetchJSON(rawUrl('data/live.json'), 8000);
+  if (j && typeof j.W === 'number' && j.lean) {
+    if (!S.live || S.live.W !== j.W || S.live.at !== j.at) { S.conf = null; S.mark = null; }
+    S.live = j;
+    S.lastOk = Date.now();
+    S.everOk = true;
+    S.failures = 0;
+    $('setupCard').hidden = true;
+  } else {
+    S.failures++;
+    if (!S.everOk && S.failures >= 3) $('setupCard').hidden = false;
+  }
+  render();
+}
+async function pollModel() {
+  const j = await fetchJSON(rawUrl('data/model.json'), 10000);
+  if (j && Array.isArray(j.w) && j.w.length === NFEAT && typeof j.b === 'number') S.model = { w: j.w, b: j.b };
+}
+async function pollBook() {
+  const j = await fetchJSON(CB + '/book?level=2', 10000);
+  const imb = j ? bookImbalance(j) : null;
+  if (imb) { S.book = imb; S.bookAt = Date.now(); }
+}
+async function markPrice(L) {
+  const tok = L.tokens && L.tokens[L.lean === 'UP' ? 'up' : 'down'];
+  if (!tok) return null;
+  const j = await fetchJSON('https://clob.polymarket.com/price?token_id=' + encodeURIComponent(tok) + '&side=SELL', 6000);
+  const v = j ? parseFloat(j.price) : NaN;
+  return v > 0 && v < 1 ? v : null;
+}
+async function refreshPosition() {
+  const L = S.live;
+  if (!L) return;
+  const t = nowS();
+  if (t < L.W + 60 || t > L.W + WINDOW + 8) return;     // only while the window runs
+  const [c, tick, mark] = await Promise.all([candles(L.W - 3700, t), fetchJSON(CB + '/ticker', 6000), markPrice(L)]);
+  if (S.live !== L) return;                              // a newer call arrived meanwhile
+  if (mark !== null) S.mark = mark;
+  if (S.model && c && tick && +tick.price > 0) {
+    const imb = (S.book && Date.now() - S.bookAt < 120000) ? S.book : null;
+    const x = liveInputs(c, L.W, nowS(), +tick.price, imb);
+    if (x) {
+      const pUp = predictP(S.model, x);
+      S.conf = L.lean === 'UP' ? pUp : 1 - pUp;          // confidence that the called side wins, even for a skip
+    }
+  }
+  render();
+}
+
+// ---------- drawing ----------
+function setPanel(cls) { $('panel').className = 'panel ' + cls; }
+
+function render() {
+  const t = nowS();
+  // connection chip
+  const age = S.lastOk ? (Date.now() - S.lastOk) / 1000 : null;
+  const chip = $('chip');
+  if (age === null) { chip.className = 'chip'; $('chipText').textContent = 'Connecting'; }
+  else if (age < 30) { chip.className = 'chip ok'; $('chipText').textContent = 'Live · updated ' + Math.round(age) + 's ago'; }
+  else { chip.className = 'chip slow'; $('chipText').textContent = 'Reconnecting · last update ' + Math.round(age) + 's ago'; }
+
+  const L = S.live;
+  if (!L) { $('bar').hidden = true; return; }
+  const ended = t >= L.W + WINDOW;
+  const lean = L.lean, c = Math.round(L.conf * 100), ask = askOf(L);
+
+  $('winLabel').textContent = (ended ? 'Last call · ' : 'Window ') + hm(L.W) + ' – ' + hm(L.W + WINDOW) + ' · called ' + hm(L.at);
+  $('pOpen').textContent = money(L.open);
+  $('pNow').textContent = money(L.cur);
+  const chg = (L.cur / L.open - 1) * 100;
+  $('pChg').textContent = (chg >= 0 ? '+' : '') + chg.toFixed(3) + '%';
+
+  if (L.bet) {
+    setPanel(L.bet === 'UP' ? 'up' : 'down');
+    $('sig').textContent = (L.bet === 'UP' ? '▲ ' : '▼ ') + L.bet;
+    if (L.basis === 'edge' && L.net !== null) {
+      $('conf').textContent = 'Bot says ' + c + '%' + (ask !== null ? ', costs ' + cents(ask) : '');
+      $('fair').textContent = 'Edge after fees: ' + signedCents(L.net) + ' (fee allowance ' + cents(L.fee) + '). Check the Polymarket app price before acting.';
+    } else {
+      $('conf').textContent = 'Confidence ' + c + '%';
+      $('fair').textContent = 'Fair price for ' + L.bet + ' is ' + c + '¢. No live Polymarket price was available at the call.';
+    }
+  } else {
+    setPanel('flat');
+    $('sig').textContent = L.basis === 'edge' ? 'SKIP' : 'NO CALL';
+    $('conf').textContent = 'Leans ' + lean + ' ' + c + '%';
+    $('fair').textContent = L.basis === 'edge'
+      ? 'Not enough edge. ' + lean + ' costs ' + (ask !== null ? cents(ask) : 'n/a') + ' against a bot fair price of ' + c + '¢.'
+      : 'Too close to 50/50 to call.';
+  }
+
+  // countdown
+  if (!ended) {
+    $('count').textContent = 'Window ends in ' + mmss(L.W + WINDOW - t);
+  } else {
+    const curW = Math.floor(t / WINDOW) * WINDOW;
+    let due = curW + (L.m || 2) * 60 + 12;
+    if (t > due + 30) due = curW + WINDOW + (L.m || 2) * 60 + 12;
+    $('count').textContent = t < due ? 'Next call in ' + mmss(due - t) : 'Next call is due any moment';
+  }
+
+  // last finished window
+  const last = L.last;
+  $('lastCard').hidden = !last;
+  if (last) {
+    const verdict = last.bet ? (last.bet === last.outcome ? 'the bet won' : 'the bet lost') : 'it was a skip';
+    $('lastText').textContent = hm(last.W) + ' window ended ' + last.outcome + ' (' + (last.src === 'polymarket' ? 'confirmed by Polymarket' : 'Coinbase result, Polymarket not confirmed yet') + '), ' + verdict + '.';
+  }
+
+  // bottom bar: the call followed as a paper trade, bet or skip
+  const bar = $('bar');
+  bar.hidden = false;
+  const arrow = lean === 'UP' ? '▲' : '▼';
+  const kind = L.bet ? 'Bet' : 'Skipped, followed as a paper trade';
+  let pos = arrow + ' ' + lean + ' · ' + kind;
+  if (ask !== null) pos += ' · bought at ' + cents(ask);
+  $('posText').textContent = pos;
+  const dEl = $('delta');
+  if (ask !== null && S.mark !== null) {
+    const d = S.mark - ask;
+    dEl.textContent = 'now ' + cents(S.mark) + ' (' + signedCents(d) + ')';
+    dEl.className = 'delta ' + (d >= 0 ? 'pos-up' : 'pos-down');
+  } else if (S.mark !== null) {
+    dEl.textContent = 'now ' + cents(S.mark);
+    dEl.className = 'delta';
+  } else {
+    dEl.textContent = '';
+    dEl.className = 'delta';
+  }
+  const meter = $('meter');
+  if (S.conf !== null) {
+    const pc = Math.round(S.conf * 100);
+    $('meterFill').style.width = pc + '%';
+    meter.className = 'meter ' + (S.conf >= 0.6 ? 'good' : (S.conf < 0.45 ? 'bad' : ''));
+    $('confText').textContent = 'Confidence ' + pc + '% that ' + lean + ' wins' + (S.conf < 0.5 ? ' · turning against you' : '');
+  } else {
+    $('meterFill').style.width = Math.round(L.conf * 100) + '%';
+    meter.className = 'meter';
+    $('confText').textContent = 'Confidence ' + c + '% at the call' + (ended ? '' : ' · updating');
+  }
+  $('leftText').textContent = ended ? 'Window over' : mmss(L.W + WINDOW - t) + ' left';
+}
+
+// ---------- start ----------
+$('ownerBtn').addEventListener('click', () => {
+  const v = $('ownerIn').value.trim();
+  if (!v) return;
+  owner = v; lsSet('btclive.owner', v); S.failures = 0; pollLive(); pollModel();
+});
+$('foot').innerHTML = 'Signals are advice only and no trades are placed. Not financial advice. Full report: <a id="rep" target="_blank" rel="noopener">STATUS.md</a>.';
+$('rep').href = 'https://github.com/' + encodeURIComponent(owner) + '/' + REPO + '/blob/' + BRANCH + '/STATUS.md';
+
+async function keepAwake() { try { if ('wakeLock' in navigator) await navigator.wakeLock.request('screen'); } catch (e) { /* optional */ } }
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') { keepAwake(); pollLive(); refreshPosition(); }
+});
+keepAwake();
+
+pollLive(); pollModel(); pollBook();
+setInterval(pollLive, 8000);
+setInterval(pollModel, 300000);
+setInterval(pollBook, 30000);
+setInterval(() => { refreshPosition(); }, 10000);
+setInterval(render, 1000);
+render();
+</script>
+</body>
+</html>
