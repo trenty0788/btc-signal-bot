@@ -1,18 +1,18 @@
 # BTC 5-minute signal bot
 
-Last update: **Nov 20 9:17 PM ET** (this job started Nov 20 4:06 PM ET)
+Last update: **Nov 20 9:22 PM ET** (this job started Nov 20 4:06 PM ET)
 
 ## Latest call
 
-**SKIP** for the window 9:15 PM to 9:20 PM
+**SKIP** for the window 9:20 PM to 9:25 PM
 
-Bot leans DOWN 77%, DOWN costs 85¢, edge -10¢ after fees.
+Bot leans DOWN 69%, DOWN costs 75¢, edge -8¢ after fees.
 
-Called at 9:17 PM. The result is known at 9:20 PM. Reload this page for the next call.
+Called at 9:22 PM. The result is known at 9:25 PM. Reload this page for the next call.
 
 ## Summary
 
-- Windows logged: **413**
+- Windows logged: **414**
 - Result confirmed by Polymarket: **412** (other windows use Coinbase's result until Polymarket's settles)
 - Polymarket prices captured: **50 of the last 50** windows
 - Bot's lean was right in **80%** of the last 100 windows
@@ -23,7 +23,7 @@ Called at 9:17 PM. The result is known at 9:20 PM. Reload this page for the next
 
 Replays logged windows with a minimum edge, after the fee allowance. A few hundred bets are needed before this means much.
 
-**All windows with a price (413)**
+**All windows with a price (414)**
 
 | Min edge | Bets | Win rate | Avg per bet |
 |---|---|---|---|
@@ -63,6 +63,7 @@ Across 2416 windows the bot claimed 71% on average and was right 75%.
 
 | Window | Bot | Price | Bet | Result | Source |
 |---|---|---|---|---|---|
+| Nov 20 9:15 PM ET | DOWN 77% | 85¢ | skip | DOWN | Coinbase |
 | Nov 20 9:10 PM ET | UP 89% | 84¢ | UP | DOWN ✗ | Coinbase (close) |
 | Nov 20 9:05 PM ET | UP 86% | 92¢ | skip | DOWN | Polymarket |
 | Nov 20 9:00 PM ET | UP 55% | 51¢ | UP | UP ✓ | Polymarket |
@@ -74,6 +75,5 @@ Across 2416 windows the bot claimed 71% on average and was right 75%.
 | Nov 20 8:30 PM ET | UP 56% | 32¢ | UP | DOWN ✗ | Polymarket |
 | Nov 20 8:25 PM ET | DOWN 72% | 73¢ | skip | DOWN | Polymarket |
 | Nov 20 8:20 PM ET | DOWN 86% | 96¢ | skip | DOWN | Polymarket |
-| Nov 20 8:15 PM ET | UP 74% | 73¢ | skip | UP | Polymarket |
 
 Signals are advice only. No trades are placed. Not financial advice.
