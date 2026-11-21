@@ -1,21 +1,21 @@
 # BTC 5-minute signal bot
 
-Last update: **Nov 21 4:12 AM ET** (this job started Nov 21 3:15 AM ET)
+Last update: **Nov 21 4:17 AM ET** (this job started Nov 21 3:15 AM ET)
 
 ## Latest call
 
-**▲ BET UP** for the window 4:10 AM to 4:15 AM
+**▲ BET UP** for the window 4:15 AM to 4:20 AM
 
-Bot leans UP 53%, UP costs 49¢, edge +2¢ after fees.
+Bot leans UP 78%, UP costs 73¢, edge +3¢ after fees.
 
-Called at 4:12 AM. The result is known at 4:15 AM. Reload this page for the next call.
+Called at 4:17 AM. The result is known at 4:20 AM. Reload this page for the next call.
 
 ## Summary
 
-- Windows logged: **475**
+- Windows logged: **476**
 - Result confirmed by Polymarket: **475** (other windows use Coinbase's result until Polymarket's settles)
 - Polymarket prices captured: **50 of the last 50** windows
-- Bot's lean was right in **75%** of the last 100 windows
+- Bot's lean was right in **74%** of the last 100 windows
 - Bot has learned from **2479** windows
 - Settings: signal 2 min in, minimum edge 2¢, fee allowance 2¢
 
@@ -23,13 +23,13 @@ Called at 4:12 AM. The result is known at 4:15 AM. Reload this page for the next
 
 Replays logged windows with a minimum edge, after the fee allowance. A few hundred bets are needed before this means much.
 
-**All windows with a price (475)**
+**All windows with a price (476)**
 
 | Min edge | Bets | Win rate | Avg per bet |
 |---|---|---|---|
-| Every call | 475 | 78% | -0.4¢ |
-| +0¢ | 164 | 68% | +2.9¢ |
-| +2¢ | 131 | 65% | +2.9¢ |
+| Every call | 476 | 78% | -0.5¢ |
+| +0¢ | 165 | 68% | +2.6¢ |
+| +2¢ | 132 | 64% | +2.5¢ |
 | +4¢ | 110 | 63% | +2.7¢ |
 | +6¢ | 88 | 60% | +3.8¢ |
 | +8¢ | 68 | 56% | +3.6¢ |
@@ -45,7 +45,7 @@ Replays logged windows with a minimum edge, after the fee allowance. A few hundr
 | +6¢ | 88 | 60% | +3.8¢ |
 | +8¢ | 68 | 56% | +3.6¢ |
 
-Unconfirmed close calls (Coinbase moved under $50) among bets at your minimum edge: **0**
+Unconfirmed close calls (Coinbase moved under $50) among bets at your minimum edge: **1**
 
 ## Limit order test
 
@@ -79,6 +79,7 @@ Across 2479 windows the bot claimed 71% on average and was right 75%.
 
 | Window | Bot | Price | Bet | Result | Source |
 |---|---|---|---|---|---|
+| Nov 21 4:10 AM ET | UP 53% | 49¢ | UP | DOWN ✗ | Coinbase (close) |
 | Nov 21 3:55 AM ET | DOWN 81% | 92¢ | skip | DOWN | Polymarket |
 | Nov 21 3:50 AM ET | UP 78% | 85¢ | skip | DOWN | Polymarket |
 | Nov 21 3:45 AM ET | UP 60% | 73¢ | skip | UP | Polymarket |
@@ -90,6 +91,5 @@ Across 2479 windows the bot claimed 71% on average and was right 75%.
 | Nov 21 1:45 AM ET | UP 90% | 89¢ | skip | UP | Polymarket |
 | Nov 21 1:40 AM ET | UP 93% | 90¢ | skip | UP | Polymarket |
 | Nov 21 1:35 AM ET | UP 51% | 40¢ | UP | UP ✓ | Polymarket |
-| Nov 21 1:30 AM ET | UP 61% | 61¢ | skip | UP | Polymarket |
 
 Signals are advice only. No trades are placed. Not financial advice.
